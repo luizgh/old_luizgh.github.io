@@ -1,15 +1,15 @@
 ---
 layout: post
-title: "Getting Started with Lasagne"
+title: "Using Lasagne for training Deep Neural Networks"
 date: 2015-12-08
-categories: libraries frameworks lasagne deeplearning
+category: libraries 
 ---
 
 There are a lot of [Deep Learning libraries][dllibraries] out there, and the *best* library really depends on what you are trying to do.
 
-After using [cuda-convnet][cudaconvnet] and [Caffe][caffe] for a while, I found out I needed more flexibily in the models, in terms of defining the objective functions and in controlling the way samples are selected / augmented during training.
+After using the libraries **cuda-convnet** and **Caffe** for a while, I found out I needed more flexibily in the models, in terms of defining the objective functions and in controlling the way samples are selected / augmented during training.
 
-Looking at alternatives, the best options to achieve what I wanted were [Torch][torch] and [Theano][theano]. Both libraries are flexible and fast, and I ended starting with Theano because of the language (Python vs Lua). There are several libraries built on top of Theano that make it even easier to specify and train neural networks, and one I found very interesting is [Lasagne][lasagne].
+Looking at alternatives, the best options to achieve what I wanted were [Torch][torch] and [Theano][theano]. Both libraries are flexible and fast, and I ended starting with Theano because of the language (Python vs Lua). There are several libraries built on top of Theano that make it even easier to specify and train neural networks, and one that I found very interesting is [Lasagne][lasagne].
 
 Lasagne is a library built on top of Theano, but it does not hide the Theano symbolic variables, so you can manipulate them very easily to modify the model or the learning procedure in any way you want. 
 
@@ -17,7 +17,7 @@ This post is intended for people who are somewhat familiar with training Neural 
 
 <h2>CNN training with lasagne</h2>
 
-We will train a convolutional neural network (CNN) on the MNIST dataset, and analyze how hard is it to make changes in the model / training algorithm / loss function using this library.
+We will train a convolutional neural network (CNN) on the MNIST dataset, and see how easy it is to make changes in the model / training algorithm / loss function using this library.
 First, install the Lasagne library folowing [these instructions][lasagne_install]. The actual code to accompany this blog post, as an iPython notebook, [can be found here][code].
 
 Now, let's describe the problem at hand.
@@ -184,7 +184,7 @@ Another thing that is easy to do in lasagne is using more advanced optimization 
 ![mnist samples](/assets/lasagne_basics/training_loss.png){: .centered}
 *Training progress with different optimization algorithms*
 
-For this model and architecture, using ADAM was much superior than the classical Stochastic Gradient Descent - for instance, in the first pass on the training set (using ADAM), the performance was the same as doing 10 epochs using SGD. Testing out different optimization algorithms is very easy in Lasagne - changing a single line of code.
+For this model and architecture, using ADAM was much superior than the classical Stochastic Gradient Descent - for instance, in the second pass on the training set (using ADAM), the performance was the same as doing 10 epochs using SGD. Testing out different optimization algorithms is very easy in Lasagne - changing a single line of code.
 
 Other things you can easily do: 
 <ul>
