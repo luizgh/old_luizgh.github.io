@@ -8,9 +8,9 @@ category: libraries
 
 There are a lot of [Deep Learning libraries][dllibraries] out there, and the *best* library really depends on what you are trying to do.
 
-After using the libraries **cuda-convnet** and **Caffe** for a while, I found out I needed more flexibily in the models, in terms of defining the objective functions and in controlling the way samples are selected / augmented during training.
+After using the libraries **cuda-convnet** and **Caffe** for a while, I found out that I needed more flexibility in the models, in terms of defining the objective functions and in controlling the way samples are selected / augmented during training.
 
-Looking at alternatives, the best options to achieve what I wanted were [Torch][torch] and [Theano][theano]. Both libraries are flexible and fast, and I ended starting with Theano because of the language (Python vs Lua). There are several libraries built on top of Theano that make it even easier to specify and train neural networks, and one that I found very interesting is [Lasagne][lasagne].
+Looking at alternatives, the best options to achieve what I wanted were [Torch][torch] and [Theano][theano]. Both libraries are flexible and fast, and I chose Theano because of the language (Python vs Lua). There are several libraries built on top of Theano that make it even easier to specify and train neural networks. One that I found very interesting is [Lasagne][lasagne].
 
 Lasagne is a library built on top of Theano, but it does not hide the Theano symbolic variables, so you can manipulate them very easily to modify the model or the learning procedure in any way you want. 
 
@@ -18,8 +18,8 @@ This post is intended for people who are somewhat familiar with training Neural 
 
 <h2>CNN training with lasagne</h2>
 
-We will train a convolutional neural network (CNN) on the MNIST dataset, and see how easy it is to make changes in the model / training algorithm / loss function using this library.
-First, install the Lasagne library folowing [these instructions][lasagne_install]. The actual code to accompany this blog post, as an iPython notebook, [can be found here][code].
+We will train a Convolutional Neural Network (CNN) on the MNIST dataset, and see how easy it is to make changes in the model / training algorithm / loss function using this library.
+First, install the Lasagne library following [these instructions][lasagne_install]. The actual **code** to accompany this blog post, as an iPython notebook, can be found here: [show me the code!][code]
 
 Now, let's describe the problem at hand.
 
@@ -55,7 +55,7 @@ target_var = T.ivector('targets')
 
 In this example, we named the inputs as *input_var* and the outputs as *target_var*. Notice that these are symbolic variables: they don't actually contain the values. Instead, they represent these variables in a series of computations (called a computational graph). The idea is that you specify a series of operations, and later you **compile** a function, so that you can actually pass inputs and receive outputs. 
 
-This may be harde to grasp initially, but it is what allows Theano to automatically calculate gradients (derivatives), which is great for trying out new things, and it also enables the library to optimize your code.
+This may be hard to grasp initially, but it is what allows Theano to automatically calculate gradients (derivatives), which is great for trying out new things, and it also enables the library to optimize your code.
 
 Defining the model in Lasagne can be done very easily. The library implements most commonly used layer types, and their declaration is very straightforward:
 
@@ -121,7 +121,7 @@ updates = lasagne.updates.sgd(
         loss, params, learning_rate=lr)
 {% endhighlight %}
 
-Here we used standard Stochastic Gradient Descent (SGD), which is a very straightforward procedure, but we can also use more advanced methods, such as Nesterov Momentum and ADAM very easily (see the [code][code] for examples).
+Here we used standard Stochastic Gradient Descent (SGD), which is a very straightforward procedure, but we can also use more advanced methods, such as Nesterov Momentum and ADAM very easily (see the [code][code] for examples). Note that the classes in *lasagne.updates* also encapsulate the call to Theano to obtain the gradients (the partial derivatives of the loss with respect to the parameters).
 
 ###Compiling the training and testing functions
 
@@ -145,11 +145,11 @@ The first line compiles the training function **train_fn**, which has an "update
 
 
 $$\DeclareMathOperator*{\argmax}{arg\,max}$$
-We have defined two functions for test: the first is **val_fn**, that returns the average loss and classification accuracy of a set of images and labels $$(x,y)$$, and **get_preds**, that returns the predictions $$P(y \vert x)$$, given a set of images $$x$$. The accuracy is calculated as follows: we consider that the model predicts the class $$y$$ that has largest values $$P(y \vert x)$$ for a given image $$x$$. That is $$\hat{y} = \argmax_y{P(y \vert x)}$$ We compare this with the ground truth, and take the average value over the entire test set.
+We have defined two functions for test: the first is **val_fn**, that returns the average loss and classification accuracy of a set of images and labels $$(x,y)$$, and **get_preds**, that returns the predictions $$P(y \vert x)$$, given a set of images $$x$$. The accuracy is calculated as follows: we consider that the model predicts the class $$y$$ that has the largest value of $$P(y \vert x)$$ for a given image $$x$$. That is $$\hat{y} = \argmax_y{P(y \vert x)}$$. We compare this prediction with the ground truth, and take the average value over the entire test set.
 
 ###Training the model
 
-To train the model, we need to call the training function **train_fn** for minibatches of the training set, until a stopping criterion.
+To train the model, we need to call the training function **train_fn** for mini-batches of the training set, until a stopping criterion.
 
 {% highlight python linenos=table %}
 
@@ -166,7 +166,7 @@ for epoch in xrange(epochs):
 
 {% endhighlight %}
 
-Here we simply run the model for a fixed number of epochs (iterations over the entire training set). In each epoch, we use mini-batches: a small set of examples that is used to calculate the derivates of the loss with respect to the weights, and update the model. Since our training function returns the loss of the minibatch, we could also track it to monitor progress (this is done in the [code][code]).
+Here we simply run the model for a fixed number of epochs (iterations over the entire training set). In each epoch, we use mini-batches: a small set of examples that is used to calculate the derivatives of the loss with respect to the weights, and update the model. Since our training function returns the loss of the mini-batch, we could also track it to monitor progress (this is done in the [code][code]).
 
 ###Testing the model
 
@@ -190,7 +190,7 @@ The model seems to be doing a pretty good job. Let's now take a look on some cas
 ![errors](/assets/lasagne_basics/errors.png){: .centered}
 *Incorrect predictions in the testing set*
 
-There is certainly room for improvement in the model, but it is entertaining to see that the cases that the model gets wrong mostly consist of harder cases. 
+There is certainly room for improvement in the model, but it is entertaining to see that the cases that the model gets wrong are mostly hard to recognize.
 
 
 ###Making changes
@@ -202,11 +202,11 @@ Another thing that is easy to do in lasagne is using more advanced optimization 
 ![mnist samples](/assets/lasagne_basics/training_loss.png){: .centered}
 *Training progress with different optimization algorithms*
 
-For this model and architecture, using ADAM was much superior than the classical Stochastic Gradient Descent - for instance, in the second pass on the training set (using ADAM), the performance was the same as doing 10 epochs using SGD. Testing out different optimization algorithms is very easy in Lasagne - changing a single line of code.
+For this dataset and model, using ADAM was much superior than the classical Stochastic Gradient Descent - for instance, in the second pass on the training set (using ADAM), the performance was the same as doing 10 epochs using SGD. Testing out different optimization algorithms is very easy in Lasagne - changing a single line of code.
 
 Other things you can easily do: 
 <ul>
-<li> Add terms to the cost function. Just add something to the "loss" variable that is used for defining the updates. Theano will take care of calculating the derivates with respect to the inputs. For instance, you may want to penalize the weights on a given layer more than the others, or you may want to jointly optimize another criterion, etc.</li>
+<li> Add terms to the cost function. Just add something to the "loss" variable that is used for defining the updates. Theano will take care of calculating the derivatives with respect to the inputs. For instance, you may want to penalize the weights on a given layer more than the others, or you may want to jointly optimize another criterion, etc.</li>
 <li> It is very easy to obtain the representations on an intermediate layer (which can be used for Transfer Learning, for instance)
 {% highlight python %}
 output_at_layer_fc1 = lasagne.layers.get_output(net['fc1'])
@@ -215,7 +215,7 @@ get_representation = theano.function([input_var], output_at_layer_fc1)
 </li>
 <li>You can fine-tuned pre-trained models. By default, the weights are initialized at random (in a good way, following [2]), but you can also initialize the layers with pre-trained weights:
 {% highlight python %}
-conv1 = lasagne.layers.Conv2DLayer(data, num_filters=32, filter_size=5, 
+net['conv1'] = lasagne.layers.Conv2DLayer(data, num_filters=32, filter_size=5, 
                                    W=pretrainedW, b=pretrainedB)
 {% endhighlight %}
 
