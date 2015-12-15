@@ -1,5 +1,6 @@
 ---
 layout: post
+comments: true
 title: "Using Lasagne for training Deep Neural Networks"
 date: 2015-12-08
 category: libraries 
@@ -229,8 +230,6 @@ There are some pre-trained models in ImageNet and other datasets in the [Model Z
 [1] LeCun, Y., Boser, B., Denker, J. S., Henderson, D., Howard, R. E., Hubbard, W., & Jackel, L. D. (1989). Backpropagation applied to handwritten zip code recognition. Neural computation, 1(4), 541-551.	
 
 [2] Glorot, X., & Bengio, Y. (2010). Understanding the difficulty of training deep feedforward neural networks. In International conference on artificial intelligence and statistics (pp. 249-256).
-
-
 
 
 
