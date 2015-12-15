@@ -30,12 +30,12 @@ We will consider the MNIST classification problem. This is a dataset of handwrit
 *Samples from the MNIST dataset*
 
 
-From a high level, what we want to do if define a model that predicts the digit (let's call it $$y$$) from an image $$x$$. Out model will have 10 outputs, each representing how confident the model is that the image is a particular number (the probability $$P(y \vert x)$$). We then consider a *cost* function that considers how **wrong** our model is, on a set of images - that is, we show a bunch of images, and check if the model is accurate in predicting $$y$$. We start our model with random parameters (so in the beginning it will do a lot of mistakes), and we iteratively modify the parameters of the model so that it makes less errors. 
+From a high level, what we want to do if define a model that identifies the digit ($$y \in [0,1,...,9]$$) from an image $$x \in \mathbb{R}^{28*28}$$. Our model will have 10 outputs, each representing how confident the model is that the image is a particular number (the probability $$P(y \vert x)$$). We then consider a **cost function** that considers how *wrong* our model is, on a set of images - that is, we show a bunch of images, and check if the model is accurate in predicting $$y$$. We start our model with random parameters (so in the beginning it will make a lot of mistakes), and we iteratively modify the parameters of the model so that it makes less errors. 
 
 
 <h3>The model</h3>
 
-Let's consider a Convolutional Network model proposed by Yann Lecun in the early 90's. In particular, we will consider a variant of the original architecture called LENET-5 [1]:
+Let's consider a Convolutional Neural Network model proposed by Yann Lecun in the early 90's. In particular, we will consider a variant of the original architecture called LENET-5 [1]:
 
 ![LENET-5](/assets/lasagne_basics/lenet5.png){: .centered}
 *The LENET-5 architecture*
@@ -44,7 +44,7 @@ Let's consider a Convolutional Network model proposed by Yann Lecun in the early
 
 We will start by defining the model using the Lasagne library. The first step is creating symbolic variables for input of the network (images) and the output - 10 neurons predicting the probability of each digit (0-9) given the image: 
 
-{% highlight python %}
+{% highlight python linenos=table %}
 data_size=(None,1,28,28) # Batch size x Img Channels x Height x Width
 output_size=10 # We will run the example in mnist - 10 digits
 
@@ -56,7 +56,7 @@ In this example, we named the inputs as *input_var* and the outputs as *target_v
 
 This may be harde to grasp initially, but it is what allows Theano to automatically calculate gradients (derivatives), which is great for trying out new things, and it also enables the library to optimize your code.
 
-Defining the model in Lasagne can be done very easily. The library implements most commonly used layer types, and their initiation is very straightforward:
+Defining the model in Lasagne can be done very easily. The library implements most commonly used layer types, and their declaration is very straightforward:
 
 {% highlight python linenos=table %}
 net = {}
@@ -81,13 +81,13 @@ net['out'] = lasagne.layers.DenseLayer(net['drop1'], num_units=output_size,
                                        nonlinearity=lasagne.nonlinearities.softmax)
 {% endhighlight %}
 
-Lasagne does not specify a "model" class, so the convention is to clear a dictionary that contains all the layers (called **net** in this example).
+Lasagne does not specify a "model" class, so the convention is to create a dictionary that contains all the layers (called **net** in this example).
 
-The definition of each layer consists of the input for that layer, followed by the parameters for the layer. In line 7 we specify the first layer called **conv1**. It receives input from the layer **data**, and has **6** filters of size **5x5**.
+The definition of each layer consists of the input for that layer, followed by the parameters for the layer. In line 7 we specify the first layer called **conv1**. It is a Convolutional Layer that receives input from the layer **data**, and has **6** filters of size **5x5**.
 
 ###Defining the cost function and the update rule
 
-We now have our model defined. The next step is defining the cost (loss) function, that we want to optimize. For classification problems, the common loss is the cross entropy loss, which is also implemented in lasagne. We will also add some regularization in the form of L2 decay.
+We now have our model defined. The next step is defining the cost (loss) function, that we want to optimize. For classification problems, the common loss is the cross entropy loss, which is also implemented in lasagne. We will also add some regularization in the form of L2 weight decay.
 
 {% highlight python linenos=table %}
 #Define hyperparameters. These could also be symbolic variables 
@@ -105,9 +105,9 @@ loss += weight_decay * weightsl2
 
 {% endhighlight %}
 
-In line 6, we get a symbolic variable of the output layer (which is our prediction $$P(y \vert x)$$. We then obtain the cross entropy loss, that will return the and since we will be training with a mini-batch, we actually receive a vector of losses (one for each example). In line 8 we just consider the average of the losses in the mini-batch.
+In line 6, we get a symbolic variable of the output layer (which is our prediction $$P(y \vert x)$$). We then obtain the cross entropy loss. Since we will be training with mini-batches, line 7 will return a vector of losses (one for each example). In line 8 we just consider the average of the losses in the mini-batch.
 
-We then add regularization in line 11. It is worth noting how easy it is to add elements to the cost function. If we look at line 11 and 12, in order to add weight decay, we simply sum the weight decay to the loss variable.
+We then add regularization in line 11. It is worth noting how easy it is to add elements to the cost function. Looking at lines 11 and 12, in order to add weight decay we simply need to sum the weight decay to the loss variable.
 
 For training the model, we need to calculate the partial derivatives of the loss with respect to the weights in our model. Here is where Theano really shines: since we defined the computations using symbolic math, it can automatically calculate the derivatives of an arbitrary loss function with respect to the weights. 
 
@@ -127,7 +127,7 @@ Here we used standard Stochastic Gradient Descent (SGD), which is a very straigh
 We now have all the variables that define our model and how to train it, the next step if to actually compile the functions that we can run to perform training and testing. 
 
 {% highlight python linenos=table %}
-train_fn = theano.function([input_var, target_var], loss, updates=updates, name='train')
+train_fn = theano.function([input_var, target_var], loss, updates=updates)
 
 test_prediction = lasagne.layers.get_output(net['out'], deterministic=True)
 test_loss = lasagne.objectives.categorical_crossentropy(test_prediction,
@@ -136,13 +136,15 @@ test_loss = test_loss.mean()
 test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), target_var),
                   dtype=theano.config.floatX)
 
-val_fn = theano.function([input_var, target_var], [test_loss, test_acc], name='validation')
-get_preds = theano.function([input_var], test_prediction, name='get_preds')
+val_fn = theano.function([input_var, target_var], [test_loss, test_acc])
+get_preds = theano.function([input_var], test_prediction)
 {% endhighlight %}
 
 The first line compiles the training function **train_fn**, which has an "updates" rule. Whenever we call this function, it updates the parameters of the model. 
 
-We have defined two functions for test: the first is **val_fn**, that returns the average loss and classification accuracy of a set of images and labels $$(x,y)$$, and **get_preds**, that returns the predictions $$P(y \vert x)$$, given a set of images $$x$$.
+
+$$\DeclareMathOperator*{\argmax}{arg\,max}$$
+We have defined two functions for test: the first is **val_fn**, that returns the average loss and classification accuracy of a set of images and labels $$(x,y)$$, and **get_preds**, that returns the predictions $$P(y \vert x)$$, given a set of images $$x$$. The accuracy is calculated as follows: we consider that the model predicts the class $$y$$ that has largest values $$P(y \vert x)$$ for a given image $$x$$. That is $$\hat{y} = \argmax_y{P(y \vert x)}$$ We compare this with the ground truth, and take the average value over the entire test set.
 
 ###Training the model
 
@@ -175,9 +177,24 @@ test_error = 1 - acc
 print('Test error: %f' % test_error)
 {% endhighlight %}
 
+And that is it. We have defined our model, trained it for a fixed number of epochs on the training set, and evaluated its performance on a testing set.
+
+Here are some predictions made by this model:
+
+![random predictions](/assets/lasagne_basics/randompreds.png){: .centered}
+*Predictions of random images from the testing set*
+
+The model seems to be doing a pretty good job. Let's now take a look on some cases where the model failed to predict the correct class:
+
+![errors](/assets/lasagne_basics/errors.png){: .centered}
+*Incorrect predictions in the testing set*
+
+There is certainly room for improvement in the model, but it is entertaining to see that the cases that the model gets wrong mostly consist of harder cases. 
+
+
 ###Making changes
 
-The nice thing about this library is that it is very easy to try out different things. The first thing is regarding the model itself. It is very easy to change the network architecture, by adding / removing layers, and changing their parameters. Other libraries (such as cuda-convnet) require that you specify the parameters in a file, which is harder to use if you want to try out different numbers of neurons in a given layer, for instance.
+The nice thing about this library is that it is very easy to try out different things. For instance, it is easy to change the model architecture, by adding / removing layers, and changing their parameters. Other libraries (such as cuda-convnet) require that you specify the parameters in a file, which is harder to use if you want to, for instance, try out different numbers of neurons in a given layer (in an automated way).
 
 Another thing that is easy to do in lasagne is using more advanced optimization algorithms. In the [code][code] I added an ipython notebook that trains the same network architecture using Stochastic Gradient Descent (SGD) and some more advanced techniques: RMSProp and ADAM. Here is a plot of the progress of the training error over time (in epochs - the number of passes through the training set): 
 
