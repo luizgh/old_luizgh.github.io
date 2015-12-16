@@ -27,7 +27,7 @@ Now, let's describe the problem at hand.
 
 We will consider the MNIST classification problem. This is a dataset of handwritten digits, where the objective is to classify small images (28x28 pixels) as a digit from 0 to 9. The samples on the dataset look like this:
 
-![mnist samples](/assets/lasagne_basics/mnist_samples.png){: .centered}
+![mnist samples]({{site.url}}/assets/lasagne_basics/mnist_samples.png){: .centered}
 *Samples from the MNIST dataset*
 
 
@@ -38,7 +38,7 @@ From a high level, what we want to do if define a model that identifies the digi
 
 Let's consider a Convolutional Neural Network model proposed by Yann Lecun in the early 90's. In particular, we will consider a variant of the original architecture called LENET-5 [1]:
 
-![LENET-5](/assets/lasagne_basics/lenet5.png){: .centered}
+![LENET-5]({{site.url}}/assets/lasagne_basics/lenet5.png){: .centered}
 *The LENET-5 architecture*
 
 ###Defining the model in lasagne
@@ -182,12 +182,12 @@ And that is it. We have defined our model, trained it for a fixed number of epoc
 
 Here are some predictions made by this model:
 
-![random predictions](/assets/lasagne_basics/randompreds.png){: .centered}
+![random predictions]({{site.url}}/assets/lasagne_basics/randompreds.png){: .centered}
 *Predictions of random images from the testing set*
 
 The model seems to be doing a pretty good job. Let's now take a look on some cases where the model failed to predict the correct class:
 
-![errors](/assets/lasagne_basics/errors.png){: .centered}
+![errors]({{site.url}}/assets/lasagne_basics/errors.png){: .centered}
 *Incorrect predictions in the testing set*
 
 There is certainly room for improvement in the model, but it is entertaining to see that the cases that the model gets wrong are mostly hard to recognize.
@@ -199,7 +199,7 @@ The nice thing about this library is that it is very easy to try out different t
 
 Another thing that is easy to do in lasagne is using more advanced optimization algorithms. In the [code][code] I added an ipython notebook that trains the same network architecture using Stochastic Gradient Descent (SGD) and some more advanced techniques: RMSProp and ADAM. Here is a plot of the progress of the training error over time (in epochs - the number of passes through the training set): 
 
-![mnist samples](/assets/lasagne_basics/training_loss.png){: .centered}
+![mnist samples]({{site.url}}/assets/lasagne_basics/training_loss.png){: .centered}
 *Training progress with different optimization algorithms*
 
 For this dataset and model, using ADAM was much superior than the classical Stochastic Gradient Descent - for instance, in the second pass on the training set (using ADAM), the performance was the same as doing 10 epochs using SGD. Testing out different optimization algorithms is very easy in Lasagne - changing a single line of code.
