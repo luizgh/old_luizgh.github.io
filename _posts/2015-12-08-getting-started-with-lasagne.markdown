@@ -166,7 +166,9 @@ for epoch in xrange(epochs):
 
 {% endhighlight %}
 
-Here we simply run the model for a fixed number of epochs (iterations over the entire training set). In each epoch, we use mini-batches: a small set of examples that is used to calculate the derivatives of the loss with respect to the weights, and update the model. Since our training function returns the loss of the mini-batch, we could also track it to monitor progress (this is done in the [code][code]).
+Here we simply run the model for a fixed number of epochs (iterations over the entire training set). In each epoch, we use mini-batches: a small set of examples that is used to calculate the derivatives of the loss with respect to the weights, and update the model. Since our training function returns the loss of the mini-batch, we could also track it to monitor progress (this is done in the [code][code]). 
+
+Running this code on a Tesla C2050 GPU takes around 10 seconds per epoch. I ran it for 50 epochs for a total of 490 seconds (a little over 8 minutes). 
 
 ###Testing the model
 
@@ -178,7 +180,9 @@ test_error = 1 - acc
 print('Test error: %f' % test_error)
 {% endhighlight %}
 
-And that is it. We have defined our model, trained it for a fixed number of epochs on the training set, and evaluated its performance on a testing set.
+With the model trained for 50 epochs, the test error we achieve is $$0.8\%$$. All 10000 test images are classified in 0.52 seconds.
+
+And that is it. We have defined our model, trained it for a fixed number of epochs on the training set, and evaluated its performance on a testing set. 
 
 Here are some predictions made by this model:
 
