@@ -1,0 +1,33 @@
+---
+layout: post
+comments: true
+title: "Notes on R-CNN"
+date: 2016-03-03
+category: reviews 
+---
+
+
+In this post I review the artice **Rich feature hierarchies for accurate object detection and semantic segmentation** ([link](http://www.cs.berkeley.edu/~rbg/papers/r-cnn-cvpr.pdf)). This article was presented at CVPR 2014, and introduces the method R-CNN (Regions with CNN features).
+
+# Summary of the paper
+
+The paper introduces a pipeline for object detection. The idea is to use Convolutional Neural Networks to detect objects in images in three steps: 1) Proposing multiple regions in an image (~ 2 thousand regions), 2) Classifying each region and 3) Filter the results using non-max suppression.
+
+The region proposal step consists in selecting regions of interest (bounding boxes around objects), in a class-independent format. To compare with previous work, the authors use a method called "selective search" [1]. 
+
+The classification of each region is done by first extracting features using a CNN (pre-trained on ImageNet and fine-tuned in the VOC dataset), and classifying with a linear SVM trained for each class (with "hard negative mining"). Since the CNN has a fixed-sized input (and the size of the regions vary), the authors adopted a simple approach of warping the region to the input size of the CNN.
+
+The last step is a greedy non-maximum suppression, applied to each class indepedently, that rejects a region if the IoU (intersection-over-union) overlap with another region (with higher score) is larger than a learned threshold.
+
+This method was tested on the VOC 2007 dataset, obtaining an mean average precision (mAP) of 58.5, compared to 34.3 in the state of the art.
+
+# Comments and opinions {#comments}
+
+The overall idea of the paper is interesting, and it seems a natural extension of previous methods (propose regions -> extract features -> classify regions), using a CNN as a feature extractor instead of using hand-crafted features.
+
+On the other hand, in this paper the authors make some choices that seemed strange to me: the first is the "warping" of the image region to the standard CNN size. This seems ackward to me, since it will distort the objects depending on how well the bounding box was selected. In my opinion, it would be more natural to crop a patch around the bounding box for classification, and keep the bounding box for actual reporting where the object is. Another decision I found strange was the usage of SVMs for  classification. Since the authors are already fine-tuning the network in the target task (VOC), it seems more natural for me to use the softmax results directly.
+
+
+# References
+
+[1] J. Uijlings, K. van de Sande, T. Gevers, and A. Smeulders. Selective search for object recognition. IJCV, 2013.
