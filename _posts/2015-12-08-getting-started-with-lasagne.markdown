@@ -41,7 +41,7 @@ Let's consider a Convolutional Neural Network model proposed by Yann Lecun in th
 ![LENET-5]({{site.url}}/assets/lasagne_basics/lenet5.png){: .centered}
 *The LENET-5 architecture*
 
-###Defining the model in lasagne
+### Defining the model in lasagne
 
 We will start by defining the model using the Lasagne library. The first step is creating symbolic variables for input of the network (images) and the output - 10 neurons predicting the probability of each digit (0-9) given the image: 
 
@@ -86,7 +86,7 @@ Lasagne does not specify a "model" class, so the convention is to create a dicti
 
 The definition of each layer consists of the input for that layer, followed by the parameters for the layer. In line 7 we specify the first layer called **conv1**. It is a Convolutional Layer that receives input from the layer **data**, and has **6** filters of size **5x5**.
 
-###Defining the cost function and the update rule
+### Defining the cost function and the update rule
 
 We now have our model defined. The next step is defining the cost (loss) function, that we want to optimize. For classification problems, the common loss is the cross entropy loss, which is also implemented in lasagne. We will also add some regularization in the form of L2 weight decay.
 
@@ -123,7 +123,7 @@ updates = lasagne.updates.sgd(
 
 Here we used standard Stochastic Gradient Descent (SGD), which is a very straightforward procedure, but we can also use more advanced methods, such as Nesterov Momentum and ADAM very easily (see the [code][code] for examples). Note that the classes in *lasagne.updates* also encapsulate the call to Theano to obtain the gradients (the partial derivatives of the loss with respect to the parameters).
 
-###Compiling the training and testing functions
+### Compiling the training and testing functions
 
 We now have all the variables that define our model and how to train it, the next step if to actually compile the functions that we can run to perform training and testing. 
 
@@ -147,7 +147,7 @@ The first line compiles the training function **train_fn**, which has an "update
 $$\DeclareMathOperator*{\argmax}{arg\,max}$$
 We have defined two functions for test: the first is **val_fn**, that returns the average loss and classification accuracy of a set of images and labels $$(x,y)$$, and **get_preds**, that returns the predictions $$P(y \vert x)$$, given a set of images $$x$$. The accuracy is calculated as follows: we consider that the model predicts the class $$y$$ that has the largest value of $$P(y \vert x)$$ for a given image $$x$$. That is $$\hat{y} = \argmax_y{P(y \vert x)}$$. We compare this prediction with the ground truth, and take the average value over the entire test set.
 
-###Training the model
+### Training the model
 
 To train the model, we need to call the training function **train_fn** for mini-batches of the training set, until a stopping criterion.
 
@@ -170,7 +170,7 @@ Here we simply run the model for a fixed number of epochs (iterations over the e
 
 Running this code on a Tesla C2050 GPU takes around 10 seconds per epoch. I ran it for 50 epochs for a total of 490 seconds (a little over 8 minutes). 
 
-###Testing the model
+### Testing the model
 
 Now that the model is trained, it is very easy to get predictions on the test set. Let's now get the accuracy on the testing set:
 
@@ -197,7 +197,7 @@ The model seems to be doing a pretty good job. Let's now take a look on some cas
 There is certainly room for improvement in the model, but it is entertaining to see that the cases that the model gets wrong are mostly hard to recognize.
 
 
-###Making changes
+### Making changes
 
 The nice thing about this library is that it is very easy to try out different things. For instance, it is easy to change the model architecture, by adding / removing layers, and changing their parameters. Other libraries (such as cuda-convnet) require that you specify the parameters in a file, which is harder to use if you want to, for instance, try out different numbers of neurons in a given layer (in an automated way).
 
@@ -229,7 +229,7 @@ net['conv1'] = lasagne.layers.Conv2DLayer(data, num_filters=32, filter_size=5,
 
 There are some pre-trained models in ImageNet and other datasets in the [Model Zoo][lasagne_zoo].
 
-###References 
+### References 
 
 [1] LeCun, Y., Boser, B., Denker, J. S., Henderson, D., Howard, R. E., Hubbard, W., & Jackel, L. D. (1989). Backpropagation applied to handwritten zip code recognition. Neural computation, 1(4), 541-551.	
 
