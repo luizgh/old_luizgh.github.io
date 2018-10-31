@@ -135,7 +135,8 @@ iframe {
 }
 .header .profile-content .name {
   color: #49515a;
-  font-size: 38px;
+  font-size: 40px;
+  font-family: arial;
   margin-bottom: 5px;
   margin-top: 30px;
 }
