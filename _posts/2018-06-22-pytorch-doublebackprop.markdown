@@ -2,7 +2,7 @@
 layout: post
 comments: true
 title: "On using double-backpropagation on pytorch"
-date: 2017-06-22
+date: 2018-06-22
 category: libraries
 ---
 
@@ -24,7 +24,7 @@ total_loss = partial_loss + torch.norm(grad)
 total_loss.backward()
 {% endhighlight %}
 
-Although this looks good, and it will *actually run*, it will not compute what you want: the ```total_loss.backward()``` operation will not back-propagate though the grad variable. 
+Although this looks good, and it will *actually run*, it will not compute what you want: the ```total_loss.backward()``` operation will not back-propagate though the grad variable.
 
 # A simpler example that we can use to identify the problem
 
@@ -41,7 +41,7 @@ $$ \frac{\partial d}{\partial a} = \frac{\partial (a + 2ab) b}{\partial a} = b(1
 Now, let's see what pytorch does for us:
 
 {% highlight python %}
-import torch 
+import torch
 
 a = torch.tensor(1, requires_grad=True)
 b = torch.tensor(2)
@@ -60,7 +60,7 @@ To obtain the correct answer, we need to use the option ```create_graph=True``` 
 
 
 {% highlight python %}
-import torch 
+import torch
 
 a = torch.tensor(1, requires_grad=True)
 b = torch.tensor(2)
